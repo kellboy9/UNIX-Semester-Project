@@ -1,5 +1,3 @@
-/* A simple server in the internet domain using TCP
-   The port number is passed as an argument */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -13,7 +11,7 @@ void error(const char *msg)
     perror(msg);
     exit(1);
 }
-void domorethanstuff(int);
+void domorethanstuff(int);				#domorethanstuff function prototype *Jorge Macias
 
 int main(int argc, char *argv[])
 {
@@ -37,24 +35,28 @@ int main(int argc, char *argv[])
               error("ERROR on binding");
      listen(sockfd,5);
      clilen = sizeof(cli_addr);
-	 while (1)					#implement while loop *Jorge Macias
+	 while (1)						#implement while loop *Jorge Macias
 	 {
      newsockfd = accept(sockfd, 
                  (struct sockaddr *) &cli_addr, &clilen);
      if (newsockfd < 0) 
           error("ERROR on accept");
-	 procid = fork();			#implement fork call *Jorge Macias
+	 procid = fork();						#implement fork call *Jorge Macias
      if (procid < 0) 
 		 error("ERROR on fork");
-     if (procid < 0) 
-		 error("ERROR writing to socket");
+     if (procid == 0)
+     	{
+		close (sockfd);
+		domorethanstuff(newsockfd);
+		exit(0);
+	 }
      else close(newsockfd);
-     }								#end of while loop *Jorge Macias
-	 close(sockfd);
+     }									#end of while loop *Jorge Macias
+	close(sockfd);
      return 0; 
 }
 
-void domorethanstuff(int sock)
+void domorethanstuff(int sock)       #create domorethanstuff function to handle seperate instances of client communicationi
 {
 	int a;
 	char buff;
