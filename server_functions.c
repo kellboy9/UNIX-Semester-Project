@@ -78,6 +78,8 @@ int tcp_proc(int argc, char *argv[]) //tcp socket process: Jorge Macias
 				(struct sockaddr *) &cli_addr, &clilen);
 		if (newsockfd < 0) 
 			error("ERROR on accept");
+		//zombie process signal handler: Jorge Macias
+		signal(SIGCHILD,SIG_IGN);
 		//implement fork call: Jorge Macias
 		procid = fork();
 		if (procid < 0) 
