@@ -4,28 +4,20 @@
 #include <stdlib.h>
 #include <arpa/inet.h>
 #include <string.h>
+#include "server_functions.h"
+
+
+//AUTH: Everyone pretty much
 
 int main(int argc, char **argv) {
-	int sock = socket(AF_INET, SOCK_STREAM, 0);
-	if(sock == -1) {
-		printf("Error creating socket.\n");
-	}
-	struct sockaddr_in server_addr;  
-	server_addr.sin_family = AF_INET;
-	server_addr.sin_port = htons(3000);
-	server_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
-	if(bind(sock, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0) {
-		printf("Error binding socket.\n");
-	}
 
-	printf("Run the client.\n");
+	//TODO: read ip + port from argv
+	struct serv *the_server = init_serv("127.0.0.1", 3000);
 
-	//listen for clients
-	listen(sock, 10);
 	struct sockaddr_storage client_addr;
 	//block until connected
 	socklen_t client_addr_size = sizeof(client_addr);
-	int client_sock = accept(sock, (struct sockaddr*)&client_addr, &client_addr_size);
+	int client_sock = accept(the_server->tcp_fd, (struct sockaddr*)&client_addr, &client_addr_size);
 	if(client_sock < 0) {
 		printf("Error accepting socket.\n");
 	}
@@ -40,6 +32,6 @@ int main(int argc, char **argv) {
 	}
 
 	close(client_sock);
-	close(sock);
+	close_serv(the_server);
 	return 0;
 }
