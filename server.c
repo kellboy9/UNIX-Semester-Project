@@ -21,6 +21,25 @@ int main(int argc, char **argv) {
 		exit(1);
 	}
 
+	int pid = fork();
+	if (pid == -1) {
+		printf("Could not create child process");
+		exit(1);
+	}
+
+	if (pid == 0) {
+		// Handle TCP here ... probably this will involve calling tcp_proc from server_functions.c
+		// passing in the_server as an argument???
+	}
+
+	else {
+		// Handle UDP here...
+		// passing in the_server as an argument???
+	}
+
+	// We will probably not need this code once we implement the stuff in the above if-statements
+	// vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+	
 	struct sockaddr_storage client_addr;
 	//block until connected
 	socklen_t client_addr_size = sizeof(client_addr);
@@ -38,7 +57,10 @@ int main(int argc, char **argv) {
 		write(client_sock, buf, 16);
 	}
 
+	// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 	close(client_sock);
+
 	close_serv(the_server);
 	return 0;
 }
