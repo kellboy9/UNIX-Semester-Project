@@ -6,7 +6,7 @@ void error(const char *msg)
 	exit(1);
 }
 //function prototype: Jorge Macias
-void domorethanstuff(int);
+void tcp_comm(int);
 
 //AUTH: Keller Hood
 //ARGS: ip is ip address in xxx.xxx.xxx.xxx format, 
@@ -53,7 +53,7 @@ void close_serv(struct serv *server) {
 	free(server);
 }
 
-int main(int argc, char *argv[])
+int tcp_proc(int argc, char *argv[]) //tcp socket process: Jorge Macias
 {
 	int sockfd, newsockfd, portno, procid;
 	socklen_t clilen;
@@ -82,6 +82,8 @@ int main(int argc, char *argv[])
 				(struct sockaddr *) &cli_addr, &clilen);
 		if (newsockfd < 0) 
 			error("ERROR on accept");
+		//zombie process signal handler: Jorge Macias
+		signal(SIGCHILD,SIG_IGN);
 		//implement fork call: Jorge Macias
 		procid = fork();
 		if (procid < 0) 
@@ -89,7 +91,7 @@ int main(int argc, char *argv[])
 		if (procid == 0)
 		{
 			close (sockfd);
-			domorethanstuff(newsockfd);
+			tcp_comm(newsockfd); //call tcp_comm function: Jorge Macias
 			exit(0);
 		}
 		else close(newsockfd);
@@ -98,7 +100,7 @@ int main(int argc, char *argv[])
 	return 0; 
 }
 //function to handle seperate instances of client communication: Jorge Macias
-void domorethanstuff(int sock)
+void tcp_comm(int sock)
 {
 	int a;
 	char buff[256];
@@ -106,7 +108,7 @@ void domorethanstuff(int sock)
 	bzero(buff, 256);
 	a = read(sock, buff, 256);
 	if (a < 0) error ("ERROR reading from socket");
-	printf("Here is a message: %s\n", buff);
-	a = write(sock, "Got some message", 18);
+	printf("Here is a message from somewhere: %s\n", buff);
+	a = write(sock, "Got some message from someplace", 18);
 	if (a < 0) error("ERROR writing from socket");
 }

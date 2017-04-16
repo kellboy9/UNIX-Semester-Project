@@ -6,6 +6,7 @@
 #include <sys/types.h> 
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <netdb.h>
 
 #ifndef SERVER_FUNCTIONS_H
 #define SERVER_FUNCTIONS_H
@@ -19,6 +20,6 @@ struct serv *init_serv(const char ip[14], int port);
 void close_serv(struct serv *server);
 
 //AUTH: Jorge Macias
-void domorethanstuff(int);
+void tcp_comm(int);
 
 #endif
