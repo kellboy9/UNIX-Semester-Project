@@ -7,6 +7,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
+#include <signal.h>
 
 #ifndef SERVER_FUNCTIONS_H
 #define SERVER_FUNCTIONS_H

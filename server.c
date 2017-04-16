@@ -16,7 +16,7 @@ int main(int argc, char **argv) {
 	}
 
 	struct serv *the_server = init_serv(argv[1], atoi(argv[2]));
-	if (!serv) { // init_serv returns null on failure
+	if (!the_server) { // init_serv returns null on failure
 		printf("Could not init server");
 		exit(1);
 	}
