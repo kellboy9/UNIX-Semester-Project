@@ -29,18 +29,27 @@ struct serv *init_serv(const char ip[14], int port) {
 	server_addr.sin_port = htons(port);
 	server_addr.sin_addr.s_addr = inet_addr(ip);
 	if(bind(tcp_sock, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0) {
-		printf("Error binding socket.\n");
+		printf("Error binding socket for TCP.\n");
 		return null;
 	}
 	listen(tcp_sock, 5);
 
 	new_serv->tcp_fd = tcp_sock;
 
+	// UDP server init, AUTH: Enoch Ng
+	int udp_sock = socket(AF_INET, SOCK_DGRAM, 0);
+	if (udp_sock < 0) {
+		printf("Error creating socket.\n");
+		return null;
+	}
 
-	//int udp_sock = ...
-	//TODO: UDP
-	//new_serv->udp_fd = udp_sock;
-	
+	if (bind(udp_sock, (struct sockaddr*) &server_addr, sizeof(server_addr)) < 0) {
+		printf("Error binding socket for UDP.\n");
+		return null;
+	}
+
+	new_serv->udp_fd = udp_sock;
+
 	return new_serv;
 }
 
