@@ -13,6 +13,8 @@ void domorethanstuff(int);
 //	port is port number, 
 //RETURN: returns a struct containing two initialized sockets, one TCP and one UDP 
 
+// Note: init_serv now returns null on error -- Enoch
+
 struct serv *init_serv(const char ip[14], int port) {
 	struct serv *new_serv = malloc(sizeof(struct serv));
 
@@ -20,6 +22,7 @@ struct serv *init_serv(const char ip[14], int port) {
 	int tcp_sock = socket(AF_INET, SOCK_STREAM, 0);
 	if(tcp_sock < 0) {
 		printf("Error creating socket.\n");
+		return null;
 	}
 	struct sockaddr_in server_addr;  
 	server_addr.sin_family = AF_INET;
@@ -27,6 +30,7 @@ struct serv *init_serv(const char ip[14], int port) {
 	server_addr.sin_addr.s_addr = inet_addr(ip);
 	if(bind(tcp_sock, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0) {
 		printf("Error binding socket.\n");
+		return null;
 	}
 	listen(tcp_sock, 5);
 

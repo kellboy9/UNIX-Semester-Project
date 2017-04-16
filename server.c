@@ -10,9 +10,15 @@
 //AUTH: Everyone pretty much
 
 int main(int argc, char **argv) {
+	if (argc != 3) {
+		printf("Error: Need exactly 2 arguments (IP and port)\n");	
+	}
 
-	//TODO: read ip + port from argv
-	struct serv *the_server = init_serv("127.0.0.1", 3000);
+	struct serv *the_server = init_serv(argv[1], atoi(argv[2]));
+	if (!serv) { // init_serv returns null on failure
+		printf("Could not init server");
+		exit(1);
+	}
 
 	struct sockaddr_storage client_addr;
 	//block until connected
