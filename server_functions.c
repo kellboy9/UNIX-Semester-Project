@@ -93,19 +93,6 @@ int tcp_proc(struct serv *server) //tcp socket process: Jorge Macias
 	close(sockfd);
 	return 0; 
 }
-//function to handle seperate instances of client communication: Jorge Macias
-void tcp_comm(int sock)
-{
-	int a;
-	char buff[256];
-
-	bzero(buff, 256);
-	a = read(sock, buff, 256);
-	if (a < 0) error ("ERROR reading from socket");
-	printf("Here is a message from somewhere: %s\n", buff);
-	a = write(sock, "Got some message from someplace", 18);
-	if (a < 0) error("ERROR writing from socket");
-}
 
 // Handle UDP
 // Returns 1 on failure
@@ -136,4 +123,18 @@ int udp_proc(struct serv *server) {
 	}
 
 	return 0; // This should never happen ...
+}
+
+//function to handle seperate instances of client communication: Jorge Macias
+void tcp_comm(int sock)
+{
+	int a;
+	char buff[256];
+
+	bzero(buff, 256);
+	a = read(sock, buff, 256);
+	if (a < 0) error ("ERROR reading from socket");
+	printf("Here is a message from somewhere: %s\n", buff);
+	a = write(sock, "Got some message from someplace", 18);
+	if (a < 0) error("ERROR writing from socket");
 }
