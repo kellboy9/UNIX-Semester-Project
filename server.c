@@ -28,8 +28,10 @@ int main(int argc, char **argv) {
 	}
 
 	if (pid == 0) {
-		// Handle TCP here ... probably this will involve calling tcp_proc from server_functions.c
-		// passing in the_server as an argument???
+		if (server_functions::tcp_proc(the_server) == 1) {
+			printf("Error in handling TCP\n");
+			exit(1);
+		}
 	}
 
 	else {
@@ -42,7 +44,7 @@ int main(int argc, char **argv) {
 	// We will probably not need this code once we implement the stuff in the above if-statements
 	// vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
 	
-	struct sockaddr_storage client_addr;
+	/*struct sockaddr_storage client_addr;
 	//block until connected
 	socklen_t client_addr_size = sizeof(client_addr);
 	int client_sock = accept(the_server->tcp_fd, (struct sockaddr*)&client_addr, &client_addr_size);
@@ -57,7 +59,7 @@ int main(int argc, char **argv) {
 	while(strcmp(buf, "exit\n") != 0) {
 		fgets(buf, 16, stdin);
 		write(client_sock, buf, 16);
-	}
+	}*/
 
 	// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
