@@ -62,7 +62,10 @@ void close_serv(struct serv *server) {
 	free(server);
 }
 
-int tcp_proc(struct serv *server) //tcp socket process: Jorge Macias
+//AUTH: Jorge Macias
+//ARGS: server struct containing tcp_fd and udp_fd
+//TCP socket process
+int tcp_proc(struct serv *server)
 {
 	int sockfd, newsockfd, portno, pid;
 	socklen_t clilen;
@@ -72,7 +75,7 @@ int tcp_proc(struct serv *server) //tcp socket process: Jorge Macias
 	//implement while loop: Jorge Macias
 	while (1)
 	{
-		newsockfd = accept(sockfd, 
+		newsockfd = accept(server->tcp_fd, 
 				(struct sockaddr *) &cli_addr, &clilen);
 		if (newsockfd < 0) 
 			error("ERROR on accept");
@@ -84,13 +87,13 @@ int tcp_proc(struct serv *server) //tcp socket process: Jorge Macias
 			error("ERROR on fork");
 		if (pid == 0)
 		{
-			close (sockfd);
-			tcp_comm(newsockfd); //call tcp_comm function: Jorge Macias
+			close (server->tcp_fd);
+			tcp_comm(newsockfd); //call tcp_comm function to prepare for additional instance: Jorge Macias
 			exit(0);
 		}
 		else close(newsockfd);
 	} //end of while loop: Jorge Macias
-	close(sockfd);
+	close(server->tcp_fd);
 	return 0; 
 }
 
@@ -125,7 +128,8 @@ int udp_proc(struct serv *server) {
 	return 0; // This should never happen ...
 }
 
-//function to handle seperate instances of client communication: Jorge Macias
+//AUTH: Jorge Macias
+//Function to handle additional instances of client communication
 void tcp_comm(int sock)
 {
 	int a;
