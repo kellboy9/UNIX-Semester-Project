@@ -1,5 +1,7 @@
 CC=gcc
 
+all: server client_function
+
 server: server.o server_functions.o
 	$(CC) -o server server.o server_functions.o
 client_function: client_function.o
