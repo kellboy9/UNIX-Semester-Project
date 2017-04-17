@@ -28,14 +28,14 @@ int main(int argc, char **argv) {
 	}
 
 	if (pid == 0) {
-		if (server_functions::tcp_proc(the_server) == 1) {
+		if (tcp_proc(the_server) == 1) {
 			printf("Error in handling TCP\n");
 			exit(1);
 		}
 	}
 
 	else {
-		if (server_functions::udp_proc(the_server) == 1) { // Actually, udp_proc starts an infinite loop, so it should never exit.
+		if (udp_proc(the_server) == 1) { // Actually, udp_proc starts an infinite loop, so it should never exit.
 			printf("Error in handling UDP\n");
 			exit(1);
 		}		
@@ -59,11 +59,11 @@ int main(int argc, char **argv) {
 	while(strcmp(buf, "exit\n") != 0) {
 		fgets(buf, 16, stdin);
 		write(client_sock, buf, 16);
-	}*/
+	}
 
+	close(client_sock);*/
 	// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-	close(client_sock);
 
 	close_serv(the_server);
 	return 0;

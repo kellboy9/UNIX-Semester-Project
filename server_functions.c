@@ -70,7 +70,7 @@ int tcp_proc(struct serv *server) //tcp socket process: Jorge Macias
 	
 	clilen = sizeof(cli_addr);
 	//implement while loop: Jorge Macias
-	while (true)
+	while (1)
 	{
 		newsockfd = accept(sockfd, 
 				(struct sockaddr *) &cli_addr, &clilen);
@@ -104,7 +104,7 @@ int udp_proc(struct serv *server) {
 	struct sockaddr_in cli_addr;
 	clilen = sizeof(cli_addr);
 
-	while (true) {
+	while (1) {
 		int n = recvfrom(server->udp_fd, buf, 1024, 0, (struct sockaddr*) &cli_addr, &clilen); 
 		if (n < 0) {
 			printf("Error reciving UDP message\n");
@@ -114,7 +114,7 @@ int udp_proc(struct serv *server) {
 		write(1, "Received a datagram: ", 21);
 		write(1, buf, n);
 
-		n = sendto(sock, "Got your message\n", 17, 0, (struct sockaddr*) &cli_addr, &clilen);
+		n = sendto(server->udp_fd, "Got your message\n", 17, 0, (struct sockaddr*) &cli_addr, clilen);
 		
 		if (n < 0) {
 			printf("Error in sending reply to UDP message\n");
