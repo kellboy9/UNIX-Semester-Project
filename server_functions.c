@@ -121,3 +121,34 @@ void tcp_comm(int sock)
 	a = write(sock, "Got some message from someplace", 18);
 	if (a < 0) error("ERROR writing from socket");
 }
+
+// Handle UDP
+// Returns 1 on failure
+// AUTH: Enoch Ng
+// Child processes are not needed here because UDP is not connection-based, so the server is able to respond to multiple clients without needing multiple processes
+int udp_proc(struct serv *server) {
+	char buf[1024];
+	socklen_t clilen;
+	struct sockaddr_in cli_addr;
+	clilen = sizeof(cli_addr);
+
+	while (true) {
+		int n = recvfrom(server->udp_fd, buf, 1024, 0, (struct sockaddr*) &cli_addr, &clilen); 
+		if (n < 0) {
+			printf("Error reciving UDP message\n");
+			return 1;
+		}
+
+		write(1, "Received a datagram: ", 21);
+		write(1, buf, n);
+
+		n = sendto(sock, "Got your message\n", 17, 0, (struct sockaddr*) &cli_addr, &clilen);
+		
+		if (n < 0) {
+			printf("Error in sending reply to UDP message\n");
+			return 1;
+		}
+	}
+
+	return 0; // This should never happen ...
+}

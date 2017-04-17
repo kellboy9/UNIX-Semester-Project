@@ -16,7 +16,7 @@ int main(int argc, char **argv) {
 	}
 
 	struct serv *the_server = init_serv(argv[1], atoi(argv[2]));
-	if (!the_server) { // init_serv returns null on failure
+	if (!the_server) { // init_serv returns NULL on failure
 		printf("Could not init server");
 		exit(1);
 	}
@@ -33,8 +33,10 @@ int main(int argc, char **argv) {
 	}
 
 	else {
-		// Handle UDP here...
-		// passing in the_server as an argument???
+		if (server_functions::udp_proc(the_server) == 1) { // Actually, udp_proc starts an infinite loop, so it should never exit.
+			printf("Error in handling UDP\n");
+			exit(1);
+		}		
 	}
 
 	// We will probably not need this code once we implement the stuff in the above if-statements
