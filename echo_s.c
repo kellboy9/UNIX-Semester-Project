@@ -6,6 +6,30 @@
 #include <string.h>
 #include "server_functions.h"
 
+int run_serv(int port) { // I moved most of the actual code in the main() function to this function -- Enoch
+	struct serv *the_server = init_serv(port);
+	if (!the_server) {
+		error("Could not init server");
+	}
+
+	int pid = fork();
+	if (pid == -1) {
+		error("Could not create child process");
+	}
+	if (pid == 0) {
+		if (tcp_proc(the_server) == 1) {
+			error("Error in handling TCP");
+		}
+	}
+	else {
+		if (udp_proc(the_server) == 1) {
+			error("Error in handling UDP");
+		}
+	}
+	close_serv(the_server); // Will this ever be called?? tcp_proc and udp_proc loop forever unless they encounter an error...
+	return 0;
+}
+
 //AUTH: Everyone pretty much
 
 int main(int argc, char **argv) {
@@ -26,28 +50,8 @@ int main(int argc, char **argv) {
 	}
 
 	// For the init_serv call, we'll fork the program 0-2 times (depending on the amount of ports), and call init_serv in each process
-	struct serv *the_server = init_serv(ports[0]);
-	if (!the_server) { // init_serv returns NULL on failure
-		error("Could not init server");
-	}
-
-	int pid = fork();
-	if (pid == -1) {
-		error("Could not create child process");
-	}
-
-	if (pid == 0) {
-		if (tcp_proc(the_server) == 1) {
-			error("Error in handling TCP\n");
-		}
-	}
-
-	else {
-		if (udp_proc(the_server) == 1) { // Actually, udp_proc starts an infinite loop, so it should never exit.
-			error("Error in handling UDP\n");
-		}		
-	}
-
-	close_serv(the_server);
+	if (run_serv(port[0]) != 0) {
+		error("Error in running the server");
+	}	
 	return 0;
 }
