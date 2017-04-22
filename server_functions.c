@@ -135,6 +135,7 @@ void tcp_comm(int sock)
 	a = read(sock, buff, 256);
 	if (a < 0) error ("ERROR reading from socket");
 	printf("Here is a message from somewhere: %s\n", buff);
-	a = write(sock, "Got some message from someplace", 18);
+	//a = write(sock, "Got some message from someplace", 18); // Keeping this commented in case I break something -- Enoch
+	a = write(sock, buff, 256); // Echo server TCP implementation -- Enoch Ng
 	if (a < 0) error("ERROR writing from socket");
 }
