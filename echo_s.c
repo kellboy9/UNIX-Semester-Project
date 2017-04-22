@@ -25,8 +25,8 @@ int main(int argc, char **argv) {
 		ports[i] = atoi(argv[i + 1]);
 	}
 
-	//struct serv *the_server = init_serv(atoi(argv[1]));
-	struct serv *the_server = init_serv(ports, argc - 1);
+	// For the init_serv call, we'll fork the program 0-2 times (depending on the amount of ports), and call init_serv in each process
+	struct serv *the_server = init_serv(ports[0]);
 	if (!the_server) { // init_serv returns NULL on failure
 		error("Could not init server");
 	}
