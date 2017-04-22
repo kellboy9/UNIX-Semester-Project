@@ -21,8 +21,12 @@ int main(int argc, char **argv) {
 
 	// Prepare arguments to be passed to init_serv -- Enoch Ng
 	int ports[3];	
+	for (int i = 0; i < argc - 1; i++) {
+		ports[i] = atoi(argv[i + 1]);
+	}
 
-	struct serv *the_server = init_serv(atoi(argv[1]));
+	//struct serv *the_server = init_serv(atoi(argv[1]));
+	struct serv *the_server = init_serv(ports, argc - 1);
 	if (!the_server) { // init_serv returns NULL on failure
 		error("Could not init server");
 	}

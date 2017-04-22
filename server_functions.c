@@ -15,7 +15,10 @@ void tcp_comm(int);
 
 // Note: init_serv now returns NULL on error -- Enoch
 // Note: modifying init_serv to only accept one arg (port #) -- Enoch
-struct serv *init_serv(int port) {
+// Note: actually, screw it, now it accepts two args: an array of ports and the amnt of ports -- Enoch
+struct serv *init_serv(int* ports, int portc) {
+	// This is not done, we need to change things to make it so it handles the arguments correctly
+	// This function will not work right now because all this code is based on the old function header with 1 argument
 	struct serv *new_serv = malloc(sizeof(struct serv));
 
 	//create + bind + listen tcp socket
