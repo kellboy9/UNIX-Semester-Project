@@ -9,10 +9,18 @@
 //AUTH: Everyone pretty much
 
 int main(int argc, char **argv) {
-	if (argc != 2) {
-		printf("Error: Need exactly 1 argument (port #)\n");	
+	if (argc < 2) {
+		printf("Error: Need at least 1 port!\n");
 		exit(1);
 	}
+
+	if (argc > 4) {
+		printf("Error: No more than 3 ports allowed.\n");
+		exit(1);
+	}
+
+	// Prepare arguments to be passed to init_serv -- Enoch Ng
+	int ports[3];	
 
 	struct serv *the_server = init_serv(atoi(argv[1]));
 	if (!the_server) { // init_serv returns NULL on failure
