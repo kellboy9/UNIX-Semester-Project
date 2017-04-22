@@ -109,12 +109,13 @@ int udp_proc(struct serv *server) {
 
 	while (1) {
 		int n = recvfrom(server->udp_fd, buf, 1024, 0, (struct sockaddr*) &cli_addr, &clilen); 
+		// n contains the number of bytes in the message
 		if (n < 0) {
 			error("Error reciving UDP message\n");
 		}
 		write(1, "Received a datagram: ", 21);
 		write(1, buf, n);
-		n = sendto(server->udp_fd, "Got your message\n", 17, 0, (struct sockaddr*) &cli_addr, clilen);
+		n = sendto(server->udp_fd, buf, n, 0, (struct sockaddr*) &cli_addr, clilen);
 		if (n < 0) {
 			error("Error in sending reply to UDP message\n");
 		}
