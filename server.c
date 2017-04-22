@@ -9,12 +9,12 @@
 //AUTH: Everyone pretty much
 
 int main(int argc, char **argv) {
-	if (argc != 3) {
-		printf("Error: Need exactly 2 arguments (IP and port)\n");	
+	if (argc != 2) {
+		printf("Error: Need exactly 1 argument (port #)\n");	
 		exit(1);
 	}
 
-	struct serv *the_server = init_serv(argv[1], atoi(argv[2]));
+	struct serv *the_server = init_serv(atoi(argv[1]));
 	if (!the_server) { // init_serv returns NULL on failure
 		error("Could not init server");
 	}

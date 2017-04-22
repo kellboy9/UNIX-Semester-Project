@@ -14,8 +14,8 @@ void tcp_comm(int);
 //RETURN: returns a struct containing two initialized sockets, one TCP and one UDP 
 
 // Note: init_serv now returns NULL on error -- Enoch
-
-struct serv *init_serv(const char ip[14], int port) {
+// Note: modifying init_serv to only accept one arg (port #) -- Enoch
+struct serv *init_serv(int port) {
 	struct serv *new_serv = malloc(sizeof(struct serv));
 
 	//create + bind + listen tcp socket
@@ -27,7 +27,7 @@ struct serv *init_serv(const char ip[14], int port) {
 	struct sockaddr_in server_addr;  
 	server_addr.sin_family = AF_INET;
 	server_addr.sin_port = htons(port);
-	server_addr.sin_addr.s_addr = inet_addr(ip);
+	server_addr.sin_addr.s_addr = INADDR_ANY;
 	if(bind(tcp_sock, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0) {
 		printf("Error binding socket for TCP.\n");
 		return NULL;
