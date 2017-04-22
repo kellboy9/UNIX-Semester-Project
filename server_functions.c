@@ -14,8 +14,8 @@ void tcp_comm(int);
 //RETURN: returns a struct containing two initialized sockets, one TCP and one UDP 
 
 // Note: init_serv now returns NULL on error -- Enoch
-
-struct serv *init_serv(const char ip[14], int port) {
+// Note: modifying init_serv to only accept one arg (port #) -- Enoch
+struct serv *init_serv(int port) {
 	struct serv *new_serv = malloc(sizeof(struct serv));
 
 	//create + bind + listen tcp socket
@@ -27,7 +27,7 @@ struct serv *init_serv(const char ip[14], int port) {
 	struct sockaddr_in server_addr;  
 	server_addr.sin_family = AF_INET;
 	server_addr.sin_port = htons(port);
-	server_addr.sin_addr.s_addr = inet_addr(ip);
+	server_addr.sin_addr.s_addr = INADDR_ANY;
 	if(bind(tcp_sock, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0) {
 		printf("Error binding socket for TCP.\n");
 		return NULL;
@@ -109,12 +109,13 @@ int udp_proc(struct serv *server) {
 
 	while (1) {
 		int n = recvfrom(server->udp_fd, buf, 1024, 0, (struct sockaddr*) &cli_addr, &clilen); 
+		// n contains the number of bytes in the message
 		if (n < 0) {
 			error("Error reciving UDP message\n");
 		}
 		write(1, "Received a datagram: ", 21);
 		write(1, buf, n);
-		n = sendto(server->udp_fd, "Got your message\n", 17, 0, (struct sockaddr*) &cli_addr, clilen);
+		n = sendto(server->udp_fd, buf, n, 0, (struct sockaddr*) &cli_addr, clilen);
 		if (n < 0) {
 			error("Error in sending reply to UDP message\n");
 		}
@@ -134,6 +135,7 @@ void tcp_comm(int sock)
 	a = read(sock, buff, 256);
 	if (a < 0) error ("ERROR reading from socket");
 	printf("Here is a message from somewhere: %s\n", buff);
-	a = write(sock, "Got some message from someplace", 18);
+	//a = write(sock, "Got some message from someplace", 18); // Keeping this commented in case I break something -- Enoch
+	a = write(sock, buff, 256); // Echo server TCP implementation -- Enoch Ng
 	if (a < 0) error("ERROR writing from socket");
 }

@@ -17,7 +17,7 @@ struct serv {
 	int tcp_fd;
 	int udp_fd;
 };
-struct serv *init_serv(const char ip[14], int port);
+struct serv *init_serv(int port); // NOTE: init_serv accepts only 1 argument now -- Enoch
 void close_serv(struct serv *server);
 
 //AUTH: Jorge Macias
