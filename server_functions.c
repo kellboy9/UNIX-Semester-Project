@@ -116,11 +116,25 @@ int udp_proc(struct serv *server) {
 		if (n < 0) {
 			error("Error reciving UDP message\n");
 		}
-		write(1, "Received a datagram: ", 21);
-		write(1, buf, n);
-		n = sendto(server->udp_fd, buf, n, 0, (struct sockaddr*) &cli_addr, clilen);
-		if (n < 0) {
-			error("Error in sending reply to UDP message\n");
+		
+		int pid = fork();
+		if (pid == 0) {
+			write(1, "Received a datagram: ", 21);
+			write(1, buf, n);
+			n = sendto(server->udp_fd, buf, n, 0, (struct sockaddr*) &cli_addr, clilen);
+			if (n < 0) {
+				error("Error in sending reply to UDP message\n");
+			}
+		}
+
+		else {
+			char log_buf[1024];
+			strftime(log_buf, 1024, "%Y-%m-%d %H:%M:%S\t\"");
+			// Add the contents of the message and other stuff here
+			n = sendto(server->udp_fd, log_buf, 1024, 0, (struct sockaddr*) &cli_addr, clilen); // Update this to have log server stuff
+			if (n < 0) {
+				error("Error in sending message to log server\n");
+			}
 		}
 	}
 
