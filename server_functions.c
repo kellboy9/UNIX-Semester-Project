@@ -128,10 +128,18 @@ int udp_proc(struct serv *server) {
 		}
 
 		else {
+			struct sockaddr_in log_server;
+			log_server.sin_family = AF_INET;
+			server.sin_addr.s_addr = "127.0.0.1";
+			server.sin_port = htons(8888);
+
+			time_t rawtime;
+			time(&rawtime);
+			struct tm *timeinfo = localtime(&rawtime);
 			char log_buf[1024];
-			strftime(log_buf, 1024, "%Y-%m-%d %H:%M:%S\t\"");
+			strftime(log_buf, 1024, "%Y-%m-%d %H:%M:%S\t\"", timeinfo);
 			// Add the contents of the message and other stuff here
-			n = sendto(server->udp_fd, log_buf, 1024, 0, (struct sockaddr*) &cli_addr, clilen); // Update this to have log server stuff
+			n = sendto(server->udp_fd, log_buf, 1024, 0, (struct sockaddr*) &log_server, log_len); // Update this to have log server stuff
 			if (n < 0) {
 				error("Error in sending message to log server\n");
 			}
