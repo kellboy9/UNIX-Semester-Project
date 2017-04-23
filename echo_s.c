@@ -9,6 +9,7 @@
 int run_serv(int port) { // I moved most of the actual code in the main() function to this function -- Enoch
 	struct serv *the_server = init_serv(port);
 	if (!the_server) {
+		printf("There was a problem starting the server. Hint: Double-check to make sure that you don't have multiple of the same port in your arguments.\n");
 		error("Could not init server");
 	}
 
