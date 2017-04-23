@@ -50,9 +50,39 @@ int main(int argc, char **argv) {
 		ports[i] = atoi(argv[i + 1]);
 	}
 
+	// Accept on multiple ports functionality - Enoch Ng
 	// For the init_serv call, we'll fork the program 0-2 times (depending on the amount of ports), and call init_serv in each process
-	if (run_serv(ports[0]) != 0) {
-		error("Error in running the server");
-	}	
+	// If the port limit were much higher, checking for every case with if-statements would be infeasible, but as it is, in the interest of time, I'm okay with just doing things the "brute force" way ...
+	if (argc > 2) {
+		int pid = fork();
+		
+		if (pid == 0) {
+			run_serv(ports[0]);
+		}
+
+		else {
+			if (argc > 3) {	
+				int pid2 = fork();
+				// I feel bad, but, not really
+				if (pid2 == 0) {
+					run_serv(ports[1]);
+				}
+
+				else {
+					run_serv(ports[2]);
+				}
+			}
+
+			else {
+				// Only 2 ports
+				run_serv(ports[1]);
+			}
+		}
+	}
+
+	else {
+		// Only 1 port, hooray
+		run_serv(ports[0]);
+	}
 	return 0;
 }
