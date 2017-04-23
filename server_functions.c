@@ -130,8 +130,9 @@ int udp_proc(struct serv *server) {
 		else {
 			struct sockaddr_in log_server;
 			log_server.sin_family = AF_INET;
-			server.sin_addr.s_addr = "127.0.0.1";
-			server.sin_port = htons(8888);
+			log_server.sin_addr.s_addr = "127.0.0.1";
+			log_server.sin_port = htons(8888);
+			int log_len = sizeof(log_server);
 
 			time_t rawtime;
 			time(&rawtime);
