@@ -45,12 +45,13 @@ int main(int argc, char **argv) {
 
 	// Prepare arguments to be passed to init_serv -- Enoch Ng
 	int ports[3];	
-	for (int i = 0; i < argc - 1; i++) {
+	int i;
+	for (i = 0; i < argc - 1; i++) {
 		ports[i] = atoi(argv[i + 1]);
 	}
 
 	// For the init_serv call, we'll fork the program 0-2 times (depending on the amount of ports), and call init_serv in each process
-	if (run_serv(port[0]) != 0) {
+	if (run_serv(ports[0]) != 0) {
 		error("Error in running the server");
 	}	
 	return 0;
