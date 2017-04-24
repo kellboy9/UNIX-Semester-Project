@@ -21,6 +21,6 @@ struct serv *init_serv(int port); // NOTE: init_serv accepts only 1 argument now
 void close_serv(struct serv *server);
 
 //AUTH: Jorge Macias
-void tcp_comm(int);
+void tcp_comm(int, struct serv *server, struct sockaddr_in cli_addr);
 
 #endif

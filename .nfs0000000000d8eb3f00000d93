@@ -1,7 +1,4 @@
 #include "server_functions.h"
-#include <time.h>
-
-int LOG_PORT = 9999;
 
 void error(const char *msg)
 {
@@ -9,7 +6,7 @@ void error(const char *msg)
 	exit(1);
 }
 //function prototype: Jorge Macias
-void tcp_comm(int, struct serv *server, struct sockaddr_in cli_addr);
+void tcp_comm(int);
 
 //AUTH: Keller Hood
 //ARGS: ip is ip address in xxx.xxx.xxx.xxx format, 
@@ -94,7 +91,7 @@ int tcp_proc(struct serv *server)
 		if (pid == 0)
 		{
 			close (server->tcp_fd);
-			tcp_comm(newsockfd, server, cli_addr); //call tcp_comm function to prepare for additional instance: Jorge Macias
+			tcp_comm(newsockfd); //call tcp_comm function to prepare for additional instance: Jorge Macias
 			exit(0);
 		}
 		else close(newsockfd);
@@ -120,7 +117,7 @@ int udp_proc(struct serv *server) {
 	log_server.sin_family = AF_INET;
 	lp = gethostbyname("127.0.0.1");	
 	bcopy((char *)lp->h_addr, (char *) &log_server.sin_addr, lp->h_length);
-	log_server.sin_port = htons(LOG_PORT);
+	log_server.sin_port = htons(6663);
 	log_len = sizeof(log_server);
 	
 	while (1) {
@@ -167,7 +164,7 @@ int udp_proc(struct serv *server) {
 
 //AUTH: Jorge Macias
 //Function to handle additional instances of client communication
-void tcp_comm(int sock, struct serv *server, struct sockaddr_in cli_addr)
+void tcp_comm(int sock)
 {
 	int a;
 	char buff[256];
@@ -179,34 +176,4 @@ void tcp_comm(int sock, struct serv *server, struct sockaddr_in cli_addr)
 	//a = write(sock, "Got some message from someplace", 18); // Keeping this commented in case I break something -- Enoch
 	a = write(sock, buff, 256); // Echo server TCP implementation -- Enoch Ng
 	if (a < 0) error("ERROR writing from socket");
-
-	socklen_t log_len;
-	struct sockaddr_in log_server;
-	struct hostent *lp;
-	log_server.sin_family = AF_INET;
-	lp = gethostbyname("127.0.0.1");
-	bcopy((char *)lp->h_addr, (char *) &log_server.sin_addr, lp->h_length);
-	log_server.sin_port = htons(LOG_PORT);
-	log_len = sizeof(log_server);
-
-	char log_buf[1024];
-	char* address = inet_ntoa(cli_addr.sin_addr); // FIX THIS LATER
-
-	time_t rawtime;
-	struct tm *timeinfo;
-	time(&rawtime);
-	timeinfo = localtime(&rawtime);
-	strftime(log_buf, 1024, "%Y-%m-\%d %H:%M:\%S", timeinfo);
-
-	strcat(log_buf, "\t\"");
-	strcat(log_buf, buff);
-	strcat(log_buf, "\" was received from ");
-	strcat(log_buf, address);
-	strcat(log_buf, "\n");
-	a = sendto(server->udp_fd, log_buf, strlen(log_buf), 0, (struct sockaddr*) &log_server, log_len);
-	memset(log_buf, 0, 1024);	
-
-	if (a < 0) {
-		error("Error in sending message to log server\n");
-	}
 }
