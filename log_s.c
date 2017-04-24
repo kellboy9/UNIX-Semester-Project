@@ -40,8 +40,9 @@ int main(int argc, char *argv[])
     while (1) {
         n = recvfrom(sock,buf,1024,0,(struct sockaddr *)&from,&fromlen);
         if (n < 0) error("recvfrom");
-        write(1,"Received a datagram: ",21);
-        write(1,buf,n);
+        //write(1,"Received a datagram: ",21);
+        //write(1,buf,n);
+        printf("Got message\n");
 	FILE *fp;
 	if((fp=fopen("echo.log","at+"))==NULL){
 	        printf("Cannot open file strike any key exit!");
@@ -51,9 +52,9 @@ int main(int argc, char *argv[])
 	int numChar=sizeof(buf);
 	fputs(buf,fp);
 	fclose(fp);
-        n = sendto(sock,buf,numChar,
-                   0,(struct sockaddr *)&from,fromlen);
-        if (n  < 0) error("sendto");
+        //n = sendto(sock,buf,numChar,
+         //          0,(struct sockaddr *)&from,fromlen);
+        //if (n  < 0) error("sendto");
     }
     return 0;
 }

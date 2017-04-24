@@ -110,41 +110,49 @@ int udp_proc(struct serv *server) {
 	struct sockaddr_in cli_addr;
 	clilen = sizeof(cli_addr);
 
+	char log_buf[1024];
+	socklen_t log_len;
+	struct sockaddr_in log_server;
+	struct hostent *lp;
+	log_server.sin_family = AF_INET;
+	lp = gethostbyname("127.0.0.1");	
+	bcopy((char *)lp->h_addr, (char *) &log_server.sin_addr, lp->h_length);
+	log_server.sin_port = htons(6663);
+	log_len = sizeof(log_server);
+	
 	while (1) {
+		printf("Start of while(1) loop\n");
 		int n = recvfrom(server->udp_fd, buf, 1024, 0, (struct sockaddr*) &cli_addr, &clilen); 
 		// n contains the number of bytes in the message
 		if (n < 0) {
 			error("Error reciving UDP message\n");
 		}
 		
-		int pid = fork();
-		if (pid == 0) {
+		//int pid = fork();
+		//if (pid == 0) {
 			write(1, "Received a datagram: ", 21);
 			write(1, buf, n);
 			n = sendto(server->udp_fd, buf, n, 0, (struct sockaddr*) &cli_addr, clilen);
 			if (n < 0) {
 				error("Error in sending reply to UDP message\n");
 			}
-		}
+		//}
 
-		else {
-			struct sockaddr_in log_server;
-			log_server.sin_family = AF_INET;
-			log_server.sin_addr.s_addr = "127.0.0.1";
-			log_server.sin_port = htons(8888);
-			int log_len = sizeof(log_server);
-
+		//else {
 			time_t rawtime;
 			time(&rawtime);
-			struct tm *timeinfo = localtime(&rawtime);
-			char log_buf[1024];
-			strftime(log_buf, 1024, "%Y-%m-%d %H:%M:%S\t\"", timeinfo);
+			struct tm *timeinfo;
+			timeinfo = localtime(&rawtime);
+			//strcpy(log_buf, "asdfasdfasdf");
+			//strftime(log_buf, 1024, "%Y-%m-\%d %H:%M:\%S", timeinfo);
+			//strftime(log_buf, 80, "Now it's %I:%M%p.", timeinfo);
+			strcpy(log_buf, buf);
 			// Add the contents of the message and other stuff here
-			n = sendto(server->udp_fd, log_buf, 1024, 0, (struct sockaddr*) &log_server, log_len); // Update this to have log server stuff
+			n = sendto(server->udp_fd, log_buf, strlen(log_buf), 0, (struct sockaddr*) &log_server, log_len); 
 			if (n < 0) {
 				error("Error in sending message to log server\n");
 			}
-		}
+		//}
 	}
 
 	return 0; // This should never happen ...
