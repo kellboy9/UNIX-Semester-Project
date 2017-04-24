@@ -121,7 +121,6 @@ int udp_proc(struct serv *server) {
 	log_len = sizeof(log_server);
 	
 	while (1) {
-		printf("Start of while(1) loop\n");
 		int n = recvfrom(server->udp_fd, buf, 1024, 0, (struct sockaddr*) &cli_addr, &clilen); 
 		// n contains the number of bytes in the message
 		if (n < 0) {
@@ -140,18 +139,23 @@ int udp_proc(struct serv *server) {
 
 		//else {
 			time_t rawtime;
-			time(&rawtime);
 			struct tm *timeinfo;
+			time(&rawtime);
 			timeinfo = localtime(&rawtime);
-			//strcpy(log_buf, "asdfasdfasdf");
-			//strftime(log_buf, 1024, "%Y-%m-\%d %H:%M:\%S", timeinfo);
-			//strftime(log_buf, 80, "Now it's %I:%M%p.", timeinfo);
-			strcpy(log_buf, buf);
+			strftime(log_buf, 1024, "%Y-%m-\%d %H:%M:\%S", timeinfo);
+
+			char* address = inet_ntoa(cli_addr.sin_addr);
+			strcat(log_buf, "\t\"");
+			strcat(log_buf, buf);
+			strcat(log_buf, "\" was received from ");
+			strcat(log_buf, address);
+			strcat(log_buf, "\n");
 			// Add the contents of the message and other stuff here
 			n = sendto(server->udp_fd, log_buf, strlen(log_buf), 0, (struct sockaddr*) &log_server, log_len); 
 			if (n < 0) {
 				error("Error in sending message to log server\n");
 			}
+			memset(log_buf, 0, 1024);
 		//}
 	}
 

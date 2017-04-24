@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
     socklen_t fromlen;
     struct sockaddr_in server;
     struct sockaddr_in from;
-    char buf[1024];
+    //char buf[1024];
     
     if (argc < 2) {
         fprintf(stderr, "ERROR, no port provided\n");
@@ -38,6 +38,8 @@ int main(int argc, char *argv[])
     fromlen = sizeof(struct sockaddr_in);
    // FILE *fp;
     while (1) {
+		char buf[1024];
+		memset(buf, 0, sizeof(buf));
         n = recvfrom(sock,buf,1024,0,(struct sockaddr *)&from,&fromlen);
         if (n < 0) error("recvfrom");
         //write(1,"Received a datagram: ",21);
