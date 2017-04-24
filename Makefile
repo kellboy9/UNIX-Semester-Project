@@ -3,7 +3,7 @@ CC=gcc
 all: echo_s echo_c log_s
 
 echo_s: echo_s.o server_functions.o
-	$(CC) -g -o echo_s echo_s.o server_functions.o
+	$(CC) -o echo_s echo_s.o server_functions.o
 echo_c: echo_c.o
 	$(CC) -o echo_c echo_c.o
 log_s: log_s.o
@@ -17,7 +17,7 @@ log_s.o: log_s.c
 	$(CC) -o log_s.o -c log_s.c
 
 server_functions.o: server_functions.c
-	$(CC) -g -o server_functions.o -c server_functions.c
+	$(CC) -o server_functions.o -c server_functions.c
 
 clean:
 	rm echo_c echo_s log_s *.o
