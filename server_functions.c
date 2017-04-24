@@ -19,8 +19,6 @@ void tcp_comm(int, struct serv *server, struct sockaddr_in cli_addr);
 // Note: init_serv now returns NULL on error -- Enoch
 // Note: modifying init_serv to only accept one arg (port #) -- Enoch
 struct serv *init_serv(int port) {
-	// This is not done, we need to change things to make it so it handles the arguments correctly
-	// This function will not work right now because all this code is based on the old function header with 1 argument
 	// Note: the size of the ports array is always 3. But, the array might not always contain 3 ints (depending on how many arguments were supplied by the user).
 	struct serv *new_serv = malloc(sizeof(struct serv));
 
@@ -130,17 +128,17 @@ int udp_proc(struct serv *server) {
 			error("Error reciving UDP message\n");
 		}
 		
-		//int pid = fork();
-		//if (pid == 0) {
+		int pid = fork();
+		if (pid == 0) {
 			write(1, "Received a datagram: ", 21);
 			write(1, buf, n);
 			n = sendto(server->udp_fd, buf, n, 0, (struct sockaddr*) &cli_addr, clilen);
 			if (n < 0) {
 				error("Error in sending reply to UDP message\n");
 			}
-		//}
+		}
 
-		//else {
+		else { // Log server functionality, AUTH: Enoch Ng
 			time_t rawtime;
 			struct tm *timeinfo;
 			time(&rawtime);
@@ -159,7 +157,7 @@ int udp_proc(struct serv *server) {
 				error("Error in sending message to log server\n");
 			}
 			memset(log_buf, 0, 1024);
-		//}
+		}
 	}
 
 	return 0; // This should never happen ...
@@ -176,37 +174,43 @@ void tcp_comm(int sock, struct serv *server, struct sockaddr_in cli_addr)
 	a = read(sock, buff, 256);
 	if (a < 0) error ("ERROR reading from socket");
 	printf("Here is a message from somewhere: %s\n", buff);
-	//a = write(sock, "Got some message from someplace", 18); // Keeping this commented in case I break something -- Enoch
-	a = write(sock, buff, 256); // Echo server TCP implementation -- Enoch Ng
-	if (a < 0) error("ERROR writing from socket");
 
-	socklen_t log_len;
-	struct sockaddr_in log_server;
-	struct hostent *lp;
-	log_server.sin_family = AF_INET;
-	lp = gethostbyname("127.0.0.1");
-	bcopy((char *)lp->h_addr, (char *) &log_server.sin_addr, lp->h_length);
-	log_server.sin_port = htons(LOG_PORT);
-	log_len = sizeof(log_server);
+	int pid = fork(); 
+	if (pid == 0) {
+		//a = write(sock, "Got some message from someplace", 18); // Keeping this commented in case I break something -- Enoch
+		a = write(sock, buff, 256); // Echo server TCP implementation, AUTH: Enoch Ng
+		if (a < 0) error("ERROR writing from socket");
+	}
 
-	char log_buf[1024];
-	char* address = inet_ntoa(cli_addr.sin_addr); // FIX THIS LATER
+	else { // Log server stuff, AUTH: Enoch Ng
+		socklen_t log_len;
+		struct sockaddr_in log_server;
+		struct hostent *lp;
+		log_server.sin_family = AF_INET;
+		lp = gethostbyname("127.0.0.1");
+		bcopy((char *)lp->h_addr, (char *) &log_server.sin_addr, lp->h_length);
+		log_server.sin_port = htons(LOG_PORT);
+		log_len = sizeof(log_server);
+	
+		char log_buf[1024];
+		char* address = inet_ntoa(cli_addr.sin_addr); // FIX THIS LATER
 
-	time_t rawtime;
-	struct tm *timeinfo;
-	time(&rawtime);
-	timeinfo = localtime(&rawtime);
-	strftime(log_buf, 1024, "%Y-%m-\%d %H:%M:\%S", timeinfo);
+		time_t rawtime;
+		struct tm *timeinfo;
+		time(&rawtime);
+		timeinfo = localtime(&rawtime);
+		strftime(log_buf, 1024, "%Y-%m-\%d %H:%M:\%S", timeinfo);
 
-	strcat(log_buf, "\t\"");
-	strcat(log_buf, buff);
-	strcat(log_buf, "\" was received from ");
-	strcat(log_buf, address);
-	strcat(log_buf, "\n");
-	a = sendto(server->udp_fd, log_buf, strlen(log_buf), 0, (struct sockaddr*) &log_server, log_len);
-	memset(log_buf, 0, 1024);	
+		strcat(log_buf, "\t\"");
+		strcat(log_buf, buff);
+		strcat(log_buf, "\" was received from ");
+		strcat(log_buf, address);
+		strcat(log_buf, "\n");
+		a = sendto(server->udp_fd, log_buf, strlen(log_buf), 0, (struct sockaddr*) &log_server, log_len);
+		memset(log_buf, 0, 1024);	
 
-	if (a < 0) {
-		error("Error in sending message to log server\n");
+		if (a < 0) {
+			error("Error in sending message to log server\n");
+		}
 	}
 }
