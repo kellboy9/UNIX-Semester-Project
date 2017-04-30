@@ -11,7 +11,8 @@
 char* log_s_ip;
 char* log_s_port;
 
-void handler(sig_t s) { 
+// Signal handler function to respond to Ctrl+C interrupt signal -- Enoch Ng
+void handler(int s) { 
 	printf("Received interrupt signal, shutting down");
 	
 	// Send a message to the log server now
@@ -42,6 +43,7 @@ void handler(sig_t s) {
 		printf("Error sending message");
 		exit(1);
 	}
+	printf("Sent shutdown message to log server\n");
 	close(sock);
 	exit(0);
 }
@@ -67,7 +69,7 @@ int run_serv(int port) { // I moved most of the actual code in the main() functi
 			error("Error in handling UDP");
 		}
 	}
-	close_serv(the_server); // Will this ever be called?? tcp_proc and udp_proc loop forever unless they encounter an error...
+	close_serv(the_server); 
 	return 0;
 }
 
@@ -92,8 +94,21 @@ int main(int argc, char **argv) {
 	}
 
 	// Need to assign the log server and log port to those variables here
+
+	log_s_ip = "127.0.0.1";
+	log_s_port = "4444"; // Make these variables depend on the arguments later
 	
-	signal(SIGINT, handler);
+	// --------------------------------------
+	// Signal handler
+	struct sigaction sigIntHandler;
+	memset(&sigIntHandler, 0, sizeof(sigIntHandler));
+	sigIntHandler.sa_handler = handler;
+	sigemptyset(&sigIntHandler.sa_mask);
+	sigIntHandler.sa_flags = 0;
+	sigaction(SIGINT, &sigIntHandler, NULL);
+	//sigset(SIGINT, handler);
+	// --------------------------------------
+	
 	// Accept on multiple ports functionality - Enoch Ng
 	// For the init_serv call, we'll fork the program 0-2 times (depending on the amount of ports), and call init_serv in each process
 	// If the port limit were much higher, checking for every case with if-statements would be infeasible, but as it is, in the interest of time, I'm okay with just doing things the "brute force" way ...

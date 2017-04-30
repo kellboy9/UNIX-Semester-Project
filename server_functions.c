@@ -1,7 +1,7 @@
 #include "server_functions.h"
 #include <time.h>
 
-int LOG_PORT = 9999;
+int LOG_PORT = 4444;
 
 void error(const char *msg)
 {
