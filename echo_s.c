@@ -4,7 +4,47 @@
 #include <stdlib.h>
 #include <arpa/inet.h>
 #include <string.h>
+#include <signal.h>
+
 #include "server_functions.h"
+
+char* log_s_ip;
+char* log_s_port;
+
+void handler(sig_t s) { 
+	printf("Received interrupt signal, shutting down");
+	
+	// Send a message to the log server now
+	
+	int sock, n;
+	unsigned int length;
+	struct sockaddr_in server, from;
+	struct hostent *hp;
+	sock = socket(AF_INET, SOCK_DGRAM, 0);
+	if (sock < 0) {
+		printf("Error creating socket");
+		exit(1);
+	}
+
+	server.sin_family = AF_INET;
+	hp = gethostbyname(log_s_ip);
+	if (hp == 0) {
+		printf("Error: unknown host");
+		exit(1);
+	}
+
+	bcopy((char *)hp->h_addr, (char *)&server.sin_addr, hp->h_length);
+	server.sin_port = htons(atoi(log_s_port));
+	length = sizeof(struct sockaddr_in);
+	char* msg = "echo_s is stopping";
+	n = sendto(sock, msg, strlen(msg), 0, (const struct sockaddr*) &server, length);
+	if (n < 0) {
+		printf("Error sending message");
+		exit(1);
+	}
+	close(sock);
+	exit(0);
+}
 
 int run_serv(int port) { // I moved most of the actual code in the main() function to this function -- Enoch
 	struct serv *the_server = init_serv(port);
@@ -51,9 +91,13 @@ int main(int argc, char **argv) {
 		ports[i] = atoi(argv[i + 1]);
 	}
 
+	// Need to assign the log server and log port to those variables here
+	
+	signal(SIGINT, handler);
 	// Accept on multiple ports functionality - Enoch Ng
 	// For the init_serv call, we'll fork the program 0-2 times (depending on the amount of ports), and call init_serv in each process
 	// If the port limit were much higher, checking for every case with if-statements would be infeasible, but as it is, in the interest of time, I'm okay with just doing things the "brute force" way ...
+
 	if (argc > 2) {
 		int pid = fork();
 		
