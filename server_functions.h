@@ -22,5 +22,11 @@ void close_serv(struct serv *server);
 
 //AUTH: Jorge Macias
 void tcp_comm(int, struct serv *server, struct sockaddr_in cli_addr);
+int tcp_proc(struct serv *server);
+int udp_proc(struct serv *server);
+
+void error(const char *msg);
+void set_log_port(int log_port);
+void set_log_ip(const char *log_ip);
 
 #endif

@@ -34,29 +34,45 @@ int run_serv(int port) { // I moved most of the actual code in the main() functi
 //AUTH: Everyone pretty much
 
 int main(int argc, char **argv) {
-	if (argc < 4) {
+	if (argc < 2) {
 		printf("Error: Need at least 1 port!\n");
-		exit(1);
-	}
-
-	if (argc > 6) {
-		printf("Error: No more than 3 ports allowed.\n");
 		exit(1);
 	}
 
 	// Prepare arguments to be passed to init_serv -- Enoch Ng
 	int ports[3];	
 	int i;
-	for (i = 0; i < argc - 3; i++) {
+	for (i = 0; i < argc - 1; i++) {
 		ports[i] = atoi(argv[i + 1]);
+		if(strcmp(argv[i+2], "-logip") == 0) {
+			//we're done with ports if we hit the logip option
+			break;
+		}
+		if(i+2 > 3) {
+			//explanation: i = 0-indexed number of argv, i+1 = 0-indexed number of port, i+2 = 1-indexed number of port.
+			printf("No more than 3 ports allowed!\n");
+			exit(1);
+		}
 	}
+	int num_ports = i+1;
+	printf("number of ports entered: %d\n", num_ports);
+	printf("port: %s, %d\n", argv[num_ports], ports[num_ports-1]);
 
 	char* log_argv=argv[i++];  //add some comment
 	char* logip=argv[i];
+	set_log_ip(logip);
+	
+	char *logport_arg = argv[++i];
+	char *logport = argv[++i];
+	if(strcmp(logport_arg, "-logport") == 0) {
+		//unsafe atoi
+		set_log_port(atoi(logport));
+	}
+
 	// Accept on multiple ports functionality - Enoch Ng
 	// For the init_serv call, we'll fork the program 0-2 times (depending on the amount of ports), and call init_serv in each process
 	// If the port limit were much higher, checking for every case with if-statements would be infeasible, but as it is, in the interest of time, I'm okay with just doing things the "brute force" way ...
-	if (argc > 2) {
+	if (num_ports > 1) {
 		int pid = fork();
 		
 		if (pid == 0) {
@@ -64,7 +80,7 @@ int main(int argc, char **argv) {
 		}
 
 		else {
-			if (argc > 3) {	
+			if (num_ports > 2) {	
 				int pid2 = fork();
 				// I feel bad, but, not really
 				if (pid2 == 0) {
