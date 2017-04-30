@@ -51,9 +51,7 @@ int main(int argc, char **argv) {
 		ports[i] = atoi(argv[i + 1]);
 	}
 
-
 	char* log_argv=argv[i++];  //add some comment
-
 	char* logip=argv[i];
 	// Accept on multiple ports functionality - Enoch Ng
 	// For the init_serv call, we'll fork the program 0-2 times (depending on the amount of ports), and call init_serv in each process
