@@ -51,6 +51,8 @@ int main(int argc, char **argv) {
 		ports[i] = atoi(argv[i + 1]);
 	}
 
+	char* log_argv=argv[i++];
+	char* logip=argv[i];
 	// Accept on multiple ports functionality - Enoch Ng
 	// For the init_serv call, we'll fork the program 0-2 times (depending on the amount of ports), and call init_serv in each process
 	// If the port limit were much higher, checking for every case with if-statements would be infeasible, but as it is, in the interest of time, I'm okay with just doing things the "brute force" way ...
