@@ -34,6 +34,37 @@ int main(int argc, char *argv[])
     bzero(&server,length);// initial the address to 0
     server.sin_family=AF_INET; // fill the structure with inforamtion of the log.s
     server.sin_addr.s_addr=INADDR_ANY;
+    
+int pid = fork(); //****USER 3: Fork UDP  process for additional port****
+if (pid == -1) { //****USER 3 FEATURE IMPLEMENTED SUCCESSFULLY****
+	error("Could not create child process");
+	}
+if (pid == 0) {	
+
+    server.sin_port=htons(atoi(argv[0]));
+    if (bind(sock,(struct sockaddr *)&server,length)<0)//bind the socket to an address
+        error("binding");
+    fromlen = sizeof(struct sockaddr_in);
+    /********
+     complete by Qi Gao
+     ********/
+    while (1) {
+		char buf[1024];// define the buffer to store the message get from echo.s
+		memset(buf, 0, sizeof(buf));// set the buffer to zero
+        n = recvfrom(sock,buf,1024,0,(struct sockaddr *)&from,&fromlen);// get the message from the echo.s
+        if (n < 0) error("recvfrom");// print out error message if the message is not got correctly
+        printf("Got message\n");
+	FILE *fp; 
+	if((fp=fopen("echo.log","at+"))==NULL){// open a file
+	        printf("Cannot open file strike any key exit!");// if not successfully opened, print out an error message
+	        exit(1);
+			                }
+	int numChar=sizeof(buf);
+	fputs(buf,fp);// write the meassage get from echo.s to the file
+	fclose(fp);
+    	}
+	}
+else {
     server.sin_port=htons(atoi(argv[1]));
     if (bind(sock,(struct sockaddr *)&server,length)<0)//bind the socket to an address
         error("binding");
@@ -55,6 +86,7 @@ int main(int argc, char *argv[])
 	int numChar=sizeof(buf);
 	fputs(buf,fp);// write the meassage get from echo.s to the file
 	fclose(fp);
-    }
+    	}
+	}
     return 0;
 }
