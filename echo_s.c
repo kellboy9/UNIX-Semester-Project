@@ -34,12 +34,12 @@ int run_serv(int port) { // I moved most of the actual code in the main() functi
 //AUTH: Everyone pretty much
 
 int main(int argc, char **argv) {
-	if (argc < 2) {
+	if (argc < 4) {
 		printf("Error: Need at least 1 port!\n");
 		exit(1);
 	}
 
-	if (argc > 4) {
+	if (argc > 6) {
 		printf("Error: No more than 3 ports allowed.\n");
 		exit(1);
 	}
@@ -47,7 +47,7 @@ int main(int argc, char **argv) {
 	// Prepare arguments to be passed to init_serv -- Enoch Ng
 	int ports[3];	
 	int i;
-	for (i = 0; i < argc - 1; i++) {
+	for (i = 0; i < argc - 3; i++) {
 		ports[i] = atoi(argv[i + 1]);
 	}
 
