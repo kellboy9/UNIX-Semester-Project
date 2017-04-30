@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
     server.sin_addr.s_addr=INADDR_ANY;
     
 int pid = fork(); //****USER 3: Fork UDP  process for additional port****
-if (pid == -1) { //****USER 3 FEATURE IMPLEMENTED SUCCESSFULLY****
+if (pid == -1) {
 	error("Could not create child process");
 	}
 if (pid == 0) {	
