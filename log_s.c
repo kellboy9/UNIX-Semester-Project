@@ -47,6 +47,16 @@ int main(int argc, char *argv[])
         n = recvfrom(sock,buf,1024,0,(struct sockaddr *)&from,&fromlen);// get the message from the echo.s
         if (n < 0) error("recvfrom");// print out error message if the message is not got correctly
         printf("Got message\n");
+	
+	// -------------------------------
+	// Functionality to close the log server -- Enoch Ng (3rd deliverable, user 4)
+	if (strcmp("echo_s is stopping", buf) == 0) {
+		printf("Received shutdown signal");
+		close(sock);
+		return 0;
+	}
+	// -------------------------------
+	
 	FILE *fp; 
 	if((fp=fopen("echo.log","at+"))==NULL){// open a file
 	        printf("Cannot open file strike any key exit!");// if not successfully opened, print out an error message
