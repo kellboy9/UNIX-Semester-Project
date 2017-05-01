@@ -2,6 +2,13 @@
 #include <time.h>
 
 int LOG_PORT = 9999;
+void set_log_port(int log_port) {
+	LOG_PORT = log_port;
+}
+const char *LOG_IP = "127.0.0.1";
+void set_log_ip(const char *log_ip) {
+	LOG_IP = log_ip;
+}
 
 void error(const char *msg)
 {
@@ -116,7 +123,7 @@ int udp_proc(struct serv *server) {
 	struct sockaddr_in log_server;
 	struct hostent *lp;
 	log_server.sin_family = AF_INET;
-	lp = gethostbyname("127.0.0.1");	
+	lp = gethostbyname(LOG_IP);	
 	bcopy((char *)lp->h_addr, (char *) &log_server.sin_addr, lp->h_length);
 	log_server.sin_port = htons(LOG_PORT);
 	log_len = sizeof(log_server);

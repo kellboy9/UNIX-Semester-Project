@@ -10,7 +10,7 @@ log_s: log_s.o
 	$(CC) -o log_s log_s.o
 
 echo_s.o: echo_s.c
-	$(CC) -o echo_s.o -c echo_s.c
+	$(CC) -o echo_s.o -c echo_s.c -g
 echo_c.o: echo_c.c
 	$(CC) -o echo_c.o -c echo_c.c
 log_s.o: log_s.c
