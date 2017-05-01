@@ -1,4 +1,5 @@
 UNIX-Semester-Project
+
 https://github.com/KayDevs/UNIX-Semester-Project
 
 Network server created by Keller Hood, Enoch Ng, Jorge Macias, Siyuan Sun, and Qi Gao for our semester project in CS 3376; builds on the client/server code provided at http://www.linuxhowtos.org/C_C++/socket.htm and adds the following features:
@@ -11,7 +12,9 @@ Network server created by Keller Hood, Enoch Ng, Jorge Macias, Siyuan Sun, and Q
 
 To run the echo server, execute echo_s with up to 3 port numbers as arguments, followed by -logip <ip_address>, where <ip_address> is the IP address of the log server.
 
-The log_s program takes 1 argument, which is the port number to listen on for messages from echo_s. This should be the same as the value of LOG_PORT in server_functions.c, which is 9999 by default.
+The log_s program takes 1 argument, which is the port number to listen on for messages from echo_s. This should be the same as the value of LOG_PORT in server_functions.c and lport in echo_s.c, which is 9999 by default.
+
+The echo client (echo_c) takes two arguments: the IP address of the echo server, and the port to connect on.
 
 The user 1, Qi Gao, modify the code of "echo_s.c" so that there will be an argument passed to echo_s indicating which ip address the log server is running on.
 
