@@ -64,11 +64,12 @@ int main(int argc, char **argv) {
 		set_log_ip(logip);
 		
 		if(argc >= num_ports + 4) {
-		char *logport_arg = argv[num_ports + 3];
-		char *logport = argv[num_ports + 4];
-		if(strcmp(logport_arg, "-logport") == 0) {
-			//unsafe atoi
-			set_log_port(atoi(logport));
+			char *logport_arg = argv[num_ports + 3];
+			char *logport = argv[num_ports + 4];
+			if(strcmp(logport_arg, "-logport") == 0) {
+				//unsafe atoi
+				set_log_port(atoi(logport));
+			}
 		}
 	}
 
