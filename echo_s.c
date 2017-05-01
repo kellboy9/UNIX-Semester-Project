@@ -58,15 +58,18 @@ int main(int argc, char **argv) {
 	int num_ports = i;
 	printf("number of ports entered: %d\n", num_ports);
 
-	char* log_argv=argv[i++];  //add some comment
-	char* logip=argv[i];
-	set_log_ip(logip);
-	
-	char *logport_arg = argv[++i];
-	char *logport = argv[++i];
-	if(strcmp(logport_arg, "-logport") == 0) {
-		//unsafe atoi
-		set_log_port(atoi(logport));
+	if(argc >= num_ports + 2) {
+		char* log_argv=argv[num_ports + 1];  //add some comment
+		char* logip=argv[num_ports + 2];
+		set_log_ip(logip);
+		
+		if(argc >= num_ports + 4) {
+		char *logport_arg = argv[num_ports + 3];
+		char *logport = argv[num_ports + 4];
+		if(strcmp(logport_arg, "-logport") == 0) {
+			//unsafe atoi
+			set_log_port(atoi(logport));
+		}
 	}
 
 	// Accept on multiple ports functionality - Enoch Ng
