@@ -65,6 +65,8 @@ int main(int argc, char *argv[])
 	int numChar=sizeof(buf);
 	fputs(buf,fp);// write the meassage get from echo.s to the file
 	fclose(fp);
+	if(strcmp(buf,"echo_s is stopping")==0){
+		break;
     }
     return 0;
 }
