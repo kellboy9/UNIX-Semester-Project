@@ -8,6 +8,7 @@
 
 #include "server_functions.h"
 
+int lport = 9999;
 char* log_ip;
 
 // Signal handler function to respond to Ctrl+C interrupt signal -- Enoch Ng
@@ -27,14 +28,14 @@ void handler(int s) {
 	}
 
 	server.sin_family = AF_INET;
-	hp = gethostbyname(log_s_ip);
+	hp = gethostbyname(log_ip);
 	if (hp == 0) {
 		printf("Error: unknown host");
 		exit(1);
 	}
 
 	bcopy((char *)hp->h_addr, (char *)&server.sin_addr, hp->h_length);
-	server.sin_port = htons(atoi(log_s_port));
+	server.sin_port = htons(lport);
 	length = sizeof(struct sockaddr_in);
 	char* msg = "echo_s is stopping";
 	n = sendto(sock, msg, strlen(msg), 0, (const struct sockaddr*) &server, length);
@@ -47,7 +48,7 @@ void handler(int s) {
 	exit(0);
 }
 
-int run_serv(int port) { // I moved most of the actual code in the main() function to this function -- Enoch
+int run_serv(int port, char* log_ip) { // I moved most of the actual code in the main() function to this function -- Enoch
 	struct serv *the_server = init_serv(port);
 	if (!the_server) {
 		printf("There was a problem starting the server. Hint: Double-check to make sure that you don't have multiple of the same port in your arguments.\n");
