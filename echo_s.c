@@ -6,7 +6,7 @@
 #include <string.h>
 #include "server_functions.h"
 
-int run_serv(int port) { // I moved most of the actual code in the main() function to this function -- Enoch
+int run_serv(int port, char* log_ip) { // I moved most of the actual code in the main() function to this function -- Enoch
 	struct serv *the_server = init_serv(port);
 	if (!the_server) {
 		printf("There was a problem starting the server. Hint: Double-check to make sure that you don't have multiple of the same port in your arguments.\n");
@@ -18,12 +18,12 @@ int run_serv(int port) { // I moved most of the actual code in the main() functi
 		error("Could not create child process");
 	}
 	if (pid == 0) {
-		if (tcp_proc(the_server) == 1) {
+		if (tcp_proc(the_server, log_ip) == 1) {
 			error("Error in handling TCP");
 		}
 	}
 	else {
-		if (udp_proc(the_server) == 1) {
+		if (udp_proc(the_server, log_ip) == 1) {
 			error("Error in handling UDP");
 		}
 	}
@@ -51,8 +51,8 @@ int main(int argc, char **argv) {
 		ports[i] = atoi(argv[i + 1]);
 	}
 
-	char* log_argv=argv[i++];  //add some comment
-	char* logip=argv[i];
+	//char* log_argv=argv[i++];
+	char* log_ip = argv[i+2];  //add some comment
 	// Accept on multiple ports functionality - Enoch Ng
 	// For the init_serv call, we'll fork the program 0-2 times (depending on the amount of ports), and call init_serv in each process
 	// If the port limit were much higher, checking for every case with if-statements would be infeasible, but as it is, in the interest of time, I'm okay with just doing things the "brute force" way ...
@@ -60,7 +60,7 @@ int main(int argc, char **argv) {
 		int pid = fork();
 		
 		if (pid == 0) {
-			run_serv(ports[0]);
+			run_serv(ports[0], log_ip);
 		}
 
 		else {
@@ -68,24 +68,24 @@ int main(int argc, char **argv) {
 				int pid2 = fork();
 				// I feel bad, but, not really
 				if (pid2 == 0) {
-					run_serv(ports[1]);
+					run_serv(ports[1], log_ip);
 				}
 
 				else {
-					run_serv(ports[2]);
+					run_serv(ports[2], log_ip);
 				}
 			}
 
 			else {
 				// Only 2 ports
-				run_serv(ports[1]);
+				run_serv(ports[1], log_ip);
 			}
 		}
 	}
 
 	else {
 		// Only 1 port, hooray
-		run_serv(ports[0]);
+		run_serv(ports[0], log_ip);
 	}
 	return 0;
 }

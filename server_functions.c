@@ -1,7 +1,7 @@
 #include "server_functions.h"
 #include <time.h>
 
-int LOG_PORT = 9999;
+int LOG_PORT = 8857;
 
 void error(const char *msg)
 {
@@ -9,7 +9,7 @@ void error(const char *msg)
 	exit(1);
 }
 //function prototype: Jorge Macias
-void tcp_comm(int, struct serv *server, struct sockaddr_in cli_addr);
+void tcp_comm(int, struct serv *server, struct sockaddr_in cli_addr, char* log_ip);
 
 //AUTH: Keller Hood
 //ARGS: ip is ip address in xxx.xxx.xxx.xxx format, 
@@ -69,7 +69,7 @@ void close_serv(struct serv *server) {
 //AUTH: Jorge Macias
 //ARGS: server struct containing tcp_fd and udp_fd
 //TCP socket process
-int tcp_proc(struct serv *server)
+int tcp_proc(struct serv *server, char* log_ip)
 {
 	int sockfd, newsockfd, portno, pid;
 	socklen_t clilen;
@@ -92,7 +92,7 @@ int tcp_proc(struct serv *server)
 		if (pid == 0)
 		{
 			close (server->tcp_fd);
-			tcp_comm(newsockfd, server, cli_addr); //call tcp_comm function to prepare for additional instance: Jorge Macias
+			tcp_comm(newsockfd, server, cli_addr, log_ip); //call tcp_comm function to prepare for additional instance: Jorge Macias
 			exit(0);
 		}
 		else close(newsockfd);
@@ -105,7 +105,7 @@ int tcp_proc(struct serv *server)
 // Returns 1 on failure
 // AUTH: Enoch Ng
 // Child processes are not needed here because UDP is not connection-based, so the server is able to respond to multiple clients without needing multiple processes
-int udp_proc(struct serv *server) {
+int udp_proc(struct serv *server, char* log_ip) {
 	char buf[1024];
 	socklen_t clilen;
 	struct sockaddr_in cli_addr;
@@ -116,7 +116,7 @@ int udp_proc(struct serv *server) {
 	struct sockaddr_in log_server;
 	struct hostent *lp;
 	log_server.sin_family = AF_INET;
-	lp = gethostbyname("127.0.0.1");	
+	lp = gethostbyname(log_ip);
 	bcopy((char *)lp->h_addr, (char *) &log_server.sin_addr, lp->h_length);
 	log_server.sin_port = htons(LOG_PORT);
 	log_len = sizeof(log_server);
@@ -165,7 +165,7 @@ int udp_proc(struct serv *server) {
 
 //AUTH: Jorge Macias
 //Function to handle additional instances of client communication
-void tcp_comm(int sock, struct serv *server, struct sockaddr_in cli_addr)
+void tcp_comm(int sock, struct serv *server, struct sockaddr_in cli_addr, char* log_ip)
 {
 	int a;
 	char buff[256];
@@ -187,7 +187,7 @@ void tcp_comm(int sock, struct serv *server, struct sockaddr_in cli_addr)
 		struct sockaddr_in log_server;
 		struct hostent *lp;
 		log_server.sin_family = AF_INET;
-		lp = gethostbyname("127.0.0.1");
+		lp = gethostbyname(log_ip);
 		bcopy((char *)lp->h_addr, (char *) &log_server.sin_addr, lp->h_length);
 		log_server.sin_port = htons(LOG_PORT);
 		log_len = sizeof(log_server);
