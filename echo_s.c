@@ -44,19 +44,19 @@ int main(int argc, char **argv) {
 	int i;
 	for (i = 0; i < argc - 1; i++) {
 		ports[i] = atoi(argv[i + 1]);
-		if(strcmp(argv[i+2], "-logip") == 0) {
+		if(argc > i+2 && strcmp(argv[i+2], "-logip") == 0) {
 			//we're done with ports if we hit the logip option
+			//(manually i++ since breaking the loop won't execute the i++ above)
+			i++;
 			break;
 		}
-		if(i+2 > 3) {
-			//explanation: i = 0-indexed number of argv, i+1 = 0-indexed number of port, i+2 = 1-indexed number of port.
+		if(i+1 > 3) {
 			printf("No more than 3 ports allowed!\n");
 			exit(1);
 		}
 	}
-	int num_ports = i+1;
+	int num_ports = i;
 	printf("number of ports entered: %d\n", num_ports);
-	printf("port: %s, %d\n", argv[num_ports], ports[num_ports-1]);
 
 	char* log_argv=argv[i++];  //add some comment
 	char* logip=argv[i];
